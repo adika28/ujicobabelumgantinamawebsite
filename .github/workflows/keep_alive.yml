@@ -1,0 +1,16 @@
+name: Keep Hugging Face Space Alive
+
+on:
+  schedule:
+    # Menjalankan ketukan ping otomatis setiap 30 menit secara konstan
+    - cron: '*/30 * * * *'
+  workflow_dispatch: # Memunculkan tombol eksekusi manual di tab Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Ping Request to FastAPI Backend
+        run: |
+          curl -I -X POST https://secsd2026020000444-gliopredict.hf.space/predict_sample \
+          -d "patient_id=150_t0_t1gd_img_prep" -d "age=55" -d "is_male=1" -d "bmi=25" -d "who_raw=1" -d "dose_raw=60"
