@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gliopredict</title>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <style>
+        :root {
+            --blue: #2563EB; --blue-dk: #1E3A8A; --sky: #38BDF8; 
+            --ink: #0F1B2D; --slate: #5B6B82; --mist: #F4F8FC; --amber: #E08A00;
+        }
+        body { font-family: sans-serif; background-color: var(--mist); color: var(--ink); margin: 0; padding: 2rem; line-height: 1.5; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1, h2, h3 { color: var(--ink); letter-spacing: -0.02em; margin-top: 0; }
+        hr { border: 0; border-top: 1px solid #E3EBF5; margin: 30px 0; }
+        
+        .card { background: white; border: 1px solid #E3EBF5; border-radius: 16px; padding: 16px 18px; box-shadow: 0 2px 8px rgba(37,99,235,0.06); margin-bottom: 10px; }
+        .metric-num { font-size: 26px; font-weight: 800; color: var(--blue); font-variant-numeric: tabular-nums; line-height: 1.1; }
+        .metric-label { font-size: 11px; color: var(--slate); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; margin-top: 2px; }
+        .metric-sub { font-size: 12px; color: var(--slate); margin-top: 3px; }
+        
+        .hero { background: linear-gradient(135deg, var(--blue), var(--sky)); border-radius: 20px; padding: 26px 30px; color: white; margin-bottom: 18px; }
+        .hero h1 { color: white; font-size: 30px; margin: 0 0 6px 0; font-weight: 800; }
+        .hero p { color: #E8F2FF; font-size: 14px; margin: 0; line-height: 1.55; }
+        
+        .step-badge { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 8px; background: var(--blue); color: white; font-weight: 800; font-size: 14px; margin-right: 8px; }
+        .howto { background: white; border: 1px solid #E3EBF5; border-radius: 14px; padding: 14px 18px; font-size: 13.5px; color: var(--ink); margin-top: 10px; }
+        .howto b { color: var(--blue-dk); }
+        .filetag { display: inline-block; background: #EAF2FF; color: var(--blue-dk); padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; margin: 2px 4px 2px 0; font-family: monospace; }
+        .note { background: #EAF2FF; border-left: 3px solid var(--blue); padding: 12px 16px; border-radius: 8px; font-size: 13px; color: var(--blue-dk); margin-bottom: 15px; }
+        .disclaimer { background: #FFF7E8; border-left: 3px solid var(--amber); padding: 12px 16px; border-radius: 8px; font-size: 13px; color: #7A5A12; margin-top: 20px;}
+        
+        .rec { display: flex; gap: 10px; align-items: flex-start; padding: 12px 16px; border-radius: 10px; background: white; border: 1px solid #E3EBF5; margin-bottom: 8px; font-size: 14px; color: var(--ink); line-height: 1.5; }
+        .rec .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--blue); margin-top: 6px; flex-shrink: 0; }
+        .varhelp { font-size: 12px; color: var(--slate); margin: -2px 0 10px 0; line-height: 1.45; }
+        .hr-up { color: #C2410C; font-weight: 700; }
+        .hr-dn { color: #047857; font-weight: 700; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
+        
+        .btn-sample { background: white; border: 1px solid #E3EBF5; padding: 12px; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .btn-sample:hover { border-color: var(--blue); background: #EAF2FF; }
+        .btn-calc { background: var(--blue); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; }
+        .btn-calc:disabled { background: #A0AEC0; cursor: not-allowed; }
+        
+        .btn-download { background: #047857; color: white; border: none; padding: 10px 14px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; }
+        .btn-download:hover { background: #065F46; }
+
+        input[type="number"], select, input[type="file"] { width: 100%; padding: 8px; border: 1px solid #E3EBF5; border-radius: 6px; box-sizing: border-box; margin-bottom: 5px; }
+        label.main-label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 2px; }
+        
+        .tabs { display: flex; border-bottom: 1px solid #E3EBF5; margin-bottom: 15px; }
+        .tab { padding: 10px 20px; cursor: pointer; color: var(--slate); font-weight: bold; }
+        .tab.active { color: var(--ink); border-bottom: 2px solid var(--blue); }
+        
+        details { background: white; border: 1px solid #E3EBF5; border-radius: 12px; padding: 10px 18px; margin-top: 20px; }
+        summary { font-weight: bold; cursor: pointer; outline: none; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th, td { border: 1px solid #E3EBF5; padding: 8px; text-align: left; }
+        th { background: var(--mist); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="hero">
+        <h1>Gliopredict</h1>
+        <p>Memperkirakan ukuran tumor dan peluang harapan hidup pasien glioblastoma dari citra MRI otak — menggabungkan segmentasi tumor otomatis dengan model survival yang telah divalidasi secara statistik.</p>
+    </div>
+
+    <div class="grid-2">
+        <div class="howto">
+            <b>Cara penggunaan</b><br>
+            <br><span class="step-badge">1</span> Pilih data sampel, atau unggah berkas MRI Anda.<br>
+            <br><span class="step-badge">2</span> Isi data klinis pasien untuk memperoleh estimasi kurva harapan hidup.<br>
+            <br><span class="step-badge">3</span> Klik "Jalankan Analisis" untuk melihat hasil segmentasi (2D & 3D) beserta luaran survival.
+        </div>
+        <div class="howto">
+            <b>Berkas yang dibutuhkan</b><br>
+            <span style="font-size:13px; color:var(--slate);">Citra MRI otak modalitas T1Gd (T1 + kontras gadolinium), format NIfTI 3D:</span><br><br>
+            <span class="filetag">.nii</span> <span class="filetag">.nii.gz</span><br>
+            <span style="font-size:12px; color:var(--slate);">Ukuran maksimum 200 MB per berkas.</span>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 30px;"><span class="step-badge">1</span>Pilih data pasien</h3>
+    <b>Data sampel tervalidasi</b>
+    <div class="grid-3">
+        <button class="btn-sample" id="btn-150_t0_t1gd_img_prep" onclick="pilihJalur('sample', '150_t0_t1gd_img_prep')">Sampel Pasien 150<br><br>Tumor Sedang (Median)</button>
+        <button class="btn-sample" id="btn-248_t0_t1gd_img_prep" onclick="pilihJalur('sample', '248_t0_t1gd_img_prep')">Sampel Pasien 248<br><br>Tumor Kecil</button>
+        <button class="btn-sample" id="btn-252_t0_t1gd_img_prep" onclick="pilihJalur('sample', '252_t0_t1gd_img_prep')">Sampel Pasien 252<br><br>Tumor Besar</button>
+    </div>
+
+    <br><b>Atau unggah berkas MRI Anda</b>
+    <input type="file" id="mri-upload" accept=".nii,.gz" onchange="pilihJalur('upload', null)">
+    <div class="note" style="margin-top: 10px;">Berkas yang diunggah maupun sampel yang dipilih akan dianalisis secara riil (live) oleh sistem kecerdasan buatan di server backend.</div>
+
+    <hr>
+    <div class="grid-2" style="margin-top: 20px;">
+        <div>
+            <h3><span class="step-badge">2</span>Parameter Klinis</h3>
+            
+            <label class="main-label">Usia (tahun)</label>
+            <input type="number" id="age" value="55">
+            <div class="varhelp">Usia pasien saat mulai pengobatan.</div>
+
+            <label class="main-label" style="margin-top:15px;">Jenis kelamin</label>
+            <select id="sex"><option value="1">Laki-laki</option><option value="0">Perempuan</option></select>
+
+            <div style="margin-top:15px; display:flex; align-items:center; gap:5px;">
+                <input type="checkbox" id="chk-bmi" style="width:auto;" onchange="document.getElementById('bmi-box').style.opacity = this.checked ? '0.5' : '1'"> 
+                <label style="font-size: 14px;">Berat/tinggi tidak diketahui</label>
+            </div>
+            <div id="bmi-box" style="display:flex; gap:10px;">
+                <div><label class="main-label">Berat badan (kg)</label><input type="number" id="weight" value="65.0"></div>
+                <div><label class="main-label">Tinggi badan (cm)</label><input type="number" id="height" value="165.0"></div>
+            </div>
+            <div class="varhelp">BMI terhitung: (berat ÷ tinggi²). Bila tak diketahui, centang kotak di atas. Dipakai BMI khas kohort: 25.0 kg/m².</div>
+
+            <div style="margin-top:15px; display:flex; align-items:center; gap:5px;">
+                <input type="checkbox" id="chk-who" style="width:auto;" onchange="document.getElementById('who').disabled = this.checked"> 
+                <label style="font-size: 14px;">Status performa tidak diketahui</label>
+            </div>
+            <input type="number" id="who" value="1" min="0" max="5">
+            <div class="varhelp">Skala kemampuan beraktivitas: 0 = aktif penuh tanpa keluhan; 5 = meninggal. Bila tak diketahui, dipakai 1.</div>
+
+            <div style="margin-top:15px; display:flex; align-items:center; gap:5px;">
+                <input type="checkbox" id="chk-dose" style="width:auto;" onchange="document.getElementById('dose').disabled = this.checked"> 
+                <label style="font-size: 14px;">Dosis radioterapi tidak diketahui</label>
+            </div>
+            <input type="number" id="dose" value="60">
+            <div class="varhelp">Total dosis radiasi (satuan Gray). Protokol standar glioblastoma umumnya 60 Gy. Bila tak diketahui, dipakai 60.</div>
+
+            <button class="btn-calc" id="btn-hitung" onclick="eksekusiAI()">Jalankan Analisis</button>
+        </div>
+
+        <div id="section-hasil" style="display: none;">
+            <h3><span class="step-badge">3</span>Hasil Analisis Model — <span id="lbl-pid"></span></h3>
+            
+            <div class="card">
+                <div class="tabs">
+                    <div class="tab" id="tab2d" onclick="ubahTab('2d')">Irisan 2D</div>
+                    <div class="tab active" id="tab3d" onclick="ubahTab('3d')">Tampilan 3D (Live Rendering)</div>
+                </div>
+                <div id="plot-3d" style="width:100%; height:320px; background-color:#0F1B2D; border-radius:12px;"></div>
+                <div id="plot-2d" style="display:none; background:#0B1B33; border-radius:12px; height:320px; align-items:center; justify-content:center; color:#3E5680; font-size:12px; text-align:center; padding: 20px;">
+                    Visualisasi 2D statis. Silakan lihat Tampilan 3D untuk peta spasial volumetrik secara riil dari model.
+                </div>
+                
+                <button class="btn-download" onclick="unduhBerkasGTV()">Unduh Berkas GTV Prediksi (.nii.gz)</button>
+            </div>
+
+            <div class="grid-4">
+                <div class="card"><div class="metric-num" id="lbl-volpred">- cc</div><div class="metric-label">Volume prediksi</div></div>
+                <div class="card"><div class="metric-num" id="lbl-volgt">- cc</div><div class="metric-label">Volume acuan ahli</div></div>
+                <div class="card"><div class="metric-num" id="lbl-dice">-</div><div class="metric-label">Dice</div><div class="metric-sub">kemiripan ahli</div></div>
+                <div class="card"><div class="metric-num" id="lbl-hd">- mm</div><div class="metric-label">HD95</div><div class="metric-sub">selisih tepi</div></div>
+            </div>
+
+            <div id="plot-survival" style="width:100%; height:330px; background:white; border:1px solid #E3EBF5; border-radius:12px; padding:10px; margin-top:20px; margin-bottom:10px;"></div>
+            
+            <div class="grid-3" style="gap:10px;">
+                <div class="card"><div class="metric-num" id="out-med">- minggu</div><div class="metric-label">Perkiraan waktu bertahan</div><div class="metric-sub">separuh pasien diperkirakan bertahan lebih lama dari ini</div></div>
+                <div class="card"><div class="metric-num" id="out-prob">-%</div><div class="metric-label">Peluang bertahan 1 tahun</div><div class="metric-sub">kemungkinan pasien masih hidup setelah 1 tahun</div></div>
+                <div class="card"><div class="metric-num" id="out-sigvar">-</div><div class="metric-label">Variabel Paling Signifikan</div><div class="metric-sub" id="out-sigp">-</div></div>
+            </div>
+
+            <div style="margin-top: 15px;">
+                <b>Catatan untuk diskusi klinis</b> — berdasarkan asosiasi statistik model, sebagai pelengkap penilaian dokter:
+                <div id="recs-box"></div>
+                <div class="rec"><div class="dot"></div><div>Estimasi berbasis populasi; variasi individual tetap ada. Keputusan terapi merupakan kewenangan klinisi.</div></div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <details>
+        <summary>Performa & cara membaca model · untuk peninjau teknis</summary>
+        <br><b>Seberapa akurat model ini?</b>
+        <div class="grid-2">
+            <div class="card"><div class="metric-num">0.127</div><div class="metric-label">IBS model</div><div class="metric-sub">semakin kecil semakin akurat</div></div>
+            <div class="card"><div class="metric-num">0.137</div><div class="metric-label">IBS tebakan dasar</div><div class="metric-sub">model harus lebih kecil dari ini</div></div>
+        </div>
+        <div class="note">Model memiliki galat (IBS) 0.127, lebih kecil dari tebakan dasar Kaplan-Meier (0.137). Artinya, memperhitungkan kondisi pasien memberi prediksi yang lebih akurat dibanding mengabaikannya.</div>
+
+        <br><b>Faktor yang memengaruhi risiko (Hazard Ratio)</b>
+        <div class="varhelp">Hazard Ratio (HR) menunjukkan arah pengaruh tiap faktor terhadap risiko: <span class="hr-up">HR > 1 menaikkan risiko</span>, <span class="hr-dn">HR < 1 menurunkan risiko</span>. Nilai p < 0,05 berarti pengaruhnya signifikan secara statistik.</div>
+        <table>
+            <tr><th>Variabel</th><th>Koefisien (β)</th><th>Hazard Ratio</th><th>p-value</th><th>Arah</th></tr>
+            <tr><td>Usia</td><td>0.010</td><td>1.010</td><td>0.300</td><td>↑ menaikkan</td></tr>
+            <tr><td>Jenis kelamin (laki-laki)</td><td>-0.030</td><td>0.970</td><td>0.820</td><td>↓ menurunkan</td></tr>
+            <tr><td>BMI</td><td>-0.030</td><td>0.970</td><td>0.150</td><td>↓ menurunkan</td></tr>
+            <tr><td>Volume tumor</td><td>0.010</td><td>1.010</td><td>0.020</td><td>↑ menaikkan</td></tr>
+            <tr><td>Status performa (WHO)</td><td>0.280</td><td>1.320</td><td>0.010</td><td>↑ menaikkan</td></tr>
+            <tr><td>Dosis radioterapi</td><td>-0.030</td><td>0.970</td><td>0.001</td><td>↓ menurunkan</td></tr>
+            <tr><td>Interaksi Dosis × WHO</td><td>-0.020</td><td>0.980</td><td>0.020</td><td>↓ menurunkan</td></tr>
+        </table>
+
+        <br><b>Glosarium</b>
+        <div style="background:white; border:1px solid #E3EBF5; border-radius:12px; padding:4px 18px; font-size:13.5px;">
+            <p><b>Segmentasi</b> — proses menandai area tumor secara otomatis pada citra MRI.</p>
+            <p><b>Volume tumor (cc)</b> — besar tumor dalam sentimeter kubik (mililiter).</p>
+            <p><b>Dice</b> — ukuran kemiripan hasil otomatis dengan tanda ahli; 1 = identik, di atas 0,8 tergolong sangat baik.</p>
+            <p><b>HD95</b> — jarak ketidaksesuaian tepi terjauh (persentil ke-95), dalam mm; makin kecil makin presisi.</p>
+            <p><b>Survival / harapan hidup</b> — peluang pasien bertahan hidup seiring waktu.</p>
+            <p><b>Kurva survival</b> — grafik turun yang menggambarkan peluang bertahan dari waktu ke waktu.</p>
+            <p><b>Perkiraan waktu bertahan</b> — perkiraan lama waktu saat separuh pasien dengan kondisi serupa diperkirakan masih bertahan hidup.</p>
+            <p><b>Hazard Ratio (HR)</b> — pengaruh suatu faktor terhadap risiko; HR > 1 menaikkan, HR < 1 menurunkan risiko.</p>
+            <p><b>IBS (Integrated Brier Score)</b> — ukuran galat prediksi; makin kecil makin akurat.</p>
+            <p><b>Cox Proportional Hazards</b> — metode statistik untuk memodelkan pengaruh beberapa faktor terhadap waktu bertahan hidup.</p>
+        </div>
+    </details>
+</div>
+
+<script>
+let modeTerpilih = null;
+let pidTerpilih = null;
+let cacheGtvBlobUrl = null;
+
+const metrikSampel = {
+    '150_t0_t1gd_img_prep': { gt: 35.1, dice: 0.846, hd: 3.77 },
+    '248_t0_t1gd_img_prep': { gt: 12.4, dice: 0.885, hd: 2.12 },
+    '252_t0_t1gd_img_prep': { gt: 118.9, dice: 0.812, hd: 4.54 }
+};
+
+function pilihJalur(mode, pid) {
+    modeTerpilih = mode;
+    pidTerpilih = pid;
+
+    document.querySelectorAll('.btn-sample').forEach(btn => {
+        btn.style.borderColor = '#E3EBF5'; btn.style.background = 'white';
+    });
+
+    if(mode === 'sample') {
+        const selectedBtn = document.getElementById('btn-' + pid);
+        if(selectedBtn) {
+            selectedBtn.style.borderColor = '#2563EB'; selectedBtn.style.background = '#EAF2FF';
+        }
+        document.getElementById('mri-upload').value = '';
+    }
+}
+
+function ubahTab(tab) {
+    if(tab === '2d') {
+        document.getElementById('tab2d').classList.add('active'); document.getElementById('tab3d').classList.remove('active');
+        document.getElementById('plot-2d').style.display = 'flex'; document.getElementById('plot-3d').style.display = 'none';
+    } else {
+        document.getElementById('tab3d').classList.add('active'); document.getElementById('tab2d').classList.remove('active');
+        document.getElementById('plot-3d').style.display = 'block'; document.getElementById('plot-2d').style.display = 'none';
+    }
+}
+
+async function eksekusiAI() {
+    if (!modeTerpilih) { alert("Pilih sampel atau unggah file MRI mentah terlebih dahulu!"); return; }
+
+    const btn = document.getElementById('btn-hitung');
+    btn.innerText = "Memproses..."; btn.disabled = true;
+
+    const age = parseFloat(document.getElementById('age').value);
+    const isMale = parseInt(document.getElementById('sex').value);
+    let bmi = 25.0;
+    if(!document.getElementById('chk-bmi').checked) {
+        bmi = parseFloat(document.getElementById('weight').value) / Math.pow(parseFloat(document.getElementById('height').value)/100, 2);
+    }
+    const who = document.getElementById('chk-who').checked ? 1 : parseFloat(document.getElementById('who').value);
+    const dose = document.getElementById('chk-dose').checked ? 60.0 : parseFloat(document.getElementById('dose').value);
+
+    const formData = new FormData();
+    formData.append("age", age); formData.append("is_male", isMale); formData.append("bmi", bmi); formData.append("who_raw", who); formData.append("dose_raw", dose);
+
+    const HF_SPACE_URL = "https://secsd2026020000444-gliopredict.hf.space";
+    let API_URL = HF_SPACE_URL + "/predict_upload";
+    
+    if (modeTerpilih === 'sample') {
+        API_URL = HF_SPACE_URL + "/predict_sample";
+        formData.append("patient_id", pidTerpilih);
+        document.getElementById('lbl-pid').innerText = pidTerpilih.split('_')[0];
+        document.getElementById('lbl-volgt').innerText = metrikSampel[pidTerpilih].gt + " cc";
+        document.getElementById('lbl-dice').innerText = metrikSampel[pidTerpilih].dice;
+        document.getElementById('lbl-hd').innerText = metrikSampel[pidTerpilih].hd + " mm";
+    } else {
+        const fileInput = document.getElementById('mri-upload');
+        if(fileInput.files.length === 0) { alert("File kosong!"); btn.disabled = false; btn.innerText = "Jalankan Analisis"; return; }
+        formData.append("file", fileInput.files[0]);
+        document.getElementById('lbl-pid').innerText = "Berkas Mandiri";
+        document.getElementById('lbl-volgt').innerText = "N/A"; document.getElementById('lbl-dice').innerText = "N/A"; document.getElementById('lbl-hd').innerText = "N/A";
+    }
+
+    try {
+        const res = await fetch(API_URL, { method: 'POST', body: formData });
+        const data = await res.json();
+
+        document.getElementById('section-hasil').style.display = 'block';
+        document.getElementById('lbl-volpred').innerText = data.volume_cc.toFixed(1) + " cc";
+
+        if (data.gtv_base64) {
+            const byteCharacters = atob(data.gtv_base64);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) { byteNumbers[i] = byteCharacters.charCodeAt(i); }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], {type: "application/gzip"});
+            if (cacheGtvBlobUrl) { URL.revokeObjectURL(cacheGtvBlobUrl); }
+            cacheGtvBlobUrl = URL.createObjectURL(blob);
+        }
+
+        Plotly.newPlot('plot-3d', [
+            { x: data.otak_x, y: data.otak_y, z: data.otak_z, mode: 'markers', type: 'scatter3d', marker: { size: 1.5, color: '#A0AEC0', opacity: 0.03 }, name: 'Anatomi Otak' },
+            { x: data.tumor_x, y: data.tumor_y, z: data.tumor_z, mode: 'markers', type: 'scatter3d', marker: { size: 3, color: '#EF4444', opacity: 0.8 }, name: 'Massa Tumor' }
+        ], { scene: { xaxis: {visible:false}, yaxis: {visible:false}, zaxis: {visible:false} }, margin: { l:0, r:0, b:0, t:0 }, paper_bgcolor: '#0F1B2D' });
+
+        Plotly.newPlot('plot-survival', [{
+            x: data.curve_t, y: data.curve_s, mode: 'lines', line: { color: '#2563EB', width: 3.5, shape: 'hv' }, fill: 'tozeroy', fillcolor: 'rgba(37,99,235,0.08)'
+        }], { title: 'Kurva Harapan Hidup Individual (Cox PH)', margin: { l: 40, r: 20, b: 40, t: 40 }, xaxis: { title: 'Waktu (minggu)', gridcolor: '#EDF2F9' }, yaxis: { title: 'Peluang bertahan hidup', gridcolor: '#EDF2F9', tickformat: '.0%', range: [0, 1.02] }, plot_bgcolor: "white", paper_bgcolor: "white" });
+
+        document.getElementById('out-med').innerText = data.median_weeks ? Math.round(data.median_weeks) + " minggu" : "> masa amatan";
+        document.getElementById('out-prob').innerText = Math.round(data.prob_1_year * 100) + "%";
+        document.getElementById('out-sigvar').innerText = data.sig_var + " (HR: " + data.sig_hr.toFixed(2) + ")";
+        document.getElementById('out-sigp').innerText = "p-value: " + data.sig_p.toFixed(3);
+
+        let recHtml = "";
+        if(who >= 3) recHtml += `<div class='rec'><div class='dot'></div><div>Status performa rendah (≥3) berasosiasi dengan risiko lebih tinggi (WHO: HR 1,32; p=0,01) — relevan untuk diskusi intensitas terapi dan dukungan suportif.</div></div>`;
+        else if(who <= 1) recHtml += `<div class='rec'><div class='dot'></div><div>Status performa baik (≤1) merupakan faktor yang menguntungkan secara statistik dalam model.</div></div>`;
+        if(dose < 60) recHtml += `<div class='rec'><div class='dot'></div><div>Dosis ${dose} Gy di bawah protokol standar 60 Gy; dalam model, dosis lebih tinggi berasosiasi dengan penurunan risiko (HR 0,97; p&lt;0,005).</div></div>`;
+        if(data.volume_cc > 50) recHtml += `<div class='rec'><div class='dot'></div><div>Volume tumor besar (${data.volume_cc.toFixed(1)} cc) berasosiasi dengan risiko sedikit lebih tinggi (HR 1,01 per cc; p=0,02).</div></div>`;
+        document.getElementById('recs-box').innerHTML = recHtml;
+
+        document.getElementById('section-hasil').scrollIntoView({ behavior: 'smooth' });
+    } catch(e) {
+        alert("Eror jaringan/server: " + e.message);
+    } finally {
+        btn.innerText = "Jalankan Analisis"; btn.disabled = false;
+    }
+}
+
+function unduhBerkasGTV() {
+    if (!cacheGtvBlobUrl) { alert("Data hasil prediksi belum tersedia!"); return; }
+    const a = document.createElement('a'); a.href = cacheGtvBlobUrl;
+    const namaPasien = pidTerpilih ? pidTerpilih.split('_')[0] : "MANDIRI";
+    a.download = "GTV_PREDIKSI_PASIEN_" + namaPasien + ".nii.gz";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+</script>
+</body>
+</html>
