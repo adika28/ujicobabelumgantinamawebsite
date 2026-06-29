@@ -198,20 +198,6 @@
             <tr><td>Dosis radioterapi</td><td>-0.030</td><td>0.970</td><td>0.001</td><td>↓ menurunkan</td></tr>
             <tr><td>Interaksi Dosis × WHO</td><td>-0.020</td><td>0.980</td><td>0.020</td><td>↓ menurunkan</td></tr>
         </table>
-
-        <br><b>Glosarium</b>
-        <div style="background:white; border:1px solid #E3EBF5; border-radius:12px; padding:4px 18px; font-size:13.5px;">
-            <p><b>Segmentasi</b> — proses menandai area tumor secara otomatis pada citra MRI.</p>
-            <p><b>Volume tumor (cc)</b> — besar tumor dalam sentimeter kubik (mililiter).</p>
-            <p><b>Dice</b> — ukuran kemiripan hasil otomatis dengan tanda ahli; 1 = identik, di atas 0,8 tergolong sangat baik.</p>
-            <p><b>HD95</b> — jarak ketidaksesuaian tepi terjauh (persentil ke-95), dalam mm; makin kecil makin presisi.</p>
-            <p><b>Survival / harapan hidup</b> — peluang pasien bertahan hidup seiring waktu.</p>
-            <p><b>Kurva survival</b> — grafik turun yang menggambarkan peluang bertahan dari waktu ke waktu.</p>
-            <p><b>Perkiraan waktu bertahan</b> — perkiraan lama waktu saat separuh pasien dengan kondisi serupa diperkirakan masih bertahan hidup.</p>
-            <p><b>Hazard Ratio (HR)</b> — pengaruh suatu faktor terhadap risiko; HR > 1 menaikkan, HR < 1 menurunkan risiko.</p>
-            <p><b>IBS (Integrated Brier Score)</b> — ukuran galat prediksi; makin kecil makin akurat.</p>
-            <p><b>Cox Proportional Hazards</b> — metode statistik untuk memodelkan pengaruh beberapa faktor terhadap waktu bertahan hidup.</p>
-        </div>
     </details>
 </div>
 
@@ -293,6 +279,11 @@ async function eksekusiAI() {
         const res = await fetch(API_URL, { method: 'POST', body: formData });
         const data = await res.json();
 
+        // Penanganan Eror API secara langsung
+        if (!res.ok) {
+            throw new Error(data.detail || "Gagal memproses analisis di server.");
+        }
+
         document.getElementById('section-hasil').style.display = 'block';
         document.getElementById('lbl-volpred').innerText = data.volume_cc.toFixed(1) + " cc";
 
@@ -329,7 +320,7 @@ async function eksekusiAI() {
 
         document.getElementById('section-hasil').scrollIntoView({ behavior: 'smooth' });
     } catch(e) {
-        alert("Eror jaringan/server: " + e.message);
+        alert("Pesan dari Server: " + e.message);
     } finally {
         btn.innerText = "Jalankan Analisis"; btn.disabled = false;
     }
