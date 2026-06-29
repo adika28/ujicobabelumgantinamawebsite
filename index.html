@@ -26,38 +26,24 @@
         
         .step-badge { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 8px; background: var(--blue); color: white; font-weight: 800; font-size: 14px; margin-right: 8px; }
         .howto { background: white; border: 1px solid #E3EBF5; border-radius: 14px; padding: 14px 18px; font-size: 13.5px; color: var(--ink); margin-top: 10px; }
-        .howto b { color: var(--blue-dk); }
-        .filetag { display: inline-block; background: #EAF2FF; color: var(--blue-dk); padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; margin: 2px 4px 2px 0; font-family: monospace; }
-        .note { background: #EAF2FF; border-left: 3px solid var(--blue); padding: 12px 16px; border-radius: 8px; font-size: 13px; color: var(--blue-dk); margin-bottom: 15px; }
-        
-        .rec { display: flex; gap: 10px; align-items: flex-start; padding: 12px 16px; border-radius: 10px; background: white; border: 1px solid #E3EBF5; margin-bottom: 8px; font-size: 14px; color: var(--ink); line-height: 1.5; }
-        .rec .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--blue); margin-top: 6px; flex-shrink: 0; }
-        .varhelp { font-size: 12px; color: var(--slate); margin: -2px 0 10px 0; line-height: 1.45; }
         
         .grid-2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 15px; }
         .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
         .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
         
-        .btn-sample { background: white; border: 1px solid #E3EBF5; padding: 12px; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .btn-sample { background: white; border: 1px solid #E3EBF5; padding: 12px; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s; font-weight: 600;}
         .btn-sample:hover { border-color: var(--blue); background: #EAF2FF; }
         .btn-calc { background: var(--blue); color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 10px; }
         .btn-calc:disabled { background: #A0AEC0; cursor: not-allowed; }
-        
         .btn-download { background: #047857; color: white; border: none; padding: 10px 14px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; }
-        .btn-download:hover { background: #065F46; }
+        .btn-reset { background: var(--slate); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer; position: absolute; right: 20px; top: 20px; z-index: 10;}
 
         input[type="number"], select, input[type="file"] { width: 100%; padding: 8px; border: 1px solid #E3EBF5; border-radius: 6px; box-sizing: border-box; margin-bottom: 5px; }
         label.main-label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 2px; }
         
-        .tabs { display: flex; border-bottom: 1px solid #E3EBF5; margin-bottom: 15px; }
+        .tabs { display: flex; border-bottom: 1px solid #E3EBF5; margin-bottom: 15px; position: relative;}
         .tab { padding: 10px 20px; cursor: pointer; color: var(--slate); font-weight: bold; }
         .tab.active { color: var(--ink); border-bottom: 2px solid var(--blue); }
-        
-        details { background: white; border: 1px solid #E3EBF5; border-radius: 12px; padding: 10px 18px; margin-top: 20px; }
-        summary { font-weight: bold; cursor: pointer; outline: none; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-        th, td { border: 1px solid #E3EBF5; padding: 8px; text-align: left; }
-        th { background: var(--mist); }
     </style>
 </head>
 <body>
@@ -65,21 +51,7 @@
 <div class="container">
     <div class="hero">
         <h1>Gliopredict</h1>
-        <p>Memperkirakan ukuran tumor dan peluang harapan hidup pasien glioblastoma dari citra MRI otak.</p>
-    </div>
-
-    <div class="grid-2">
-        <div class="howto">
-            <b>Cara penggunaan</b><br>
-            <br><span class="step-badge">1</span> Pilih data sampel, atau unggah berkas MRI.<br>
-            <br><span class="step-badge">2</span> Isi data klinis pasien untuk estimasi survival.<br>
-            <br><span class="step-badge">3</span> Klik "Jalankan Analisis".
-        </div>
-        <div class="howto">
-            <b>Berkas yang dibutuhkan</b><br>
-            <span style="font-size:13px; color:var(--slate);">Citra MRI otak T1Gd, format NIfTI 3D:</span><br><br>
-            <span class="filetag">.nii.gz</span><br>
-        </div>
+        <p>Live Pipeline AI untuk Segmentasi Volumetrik 3D dan Estimasi Survival Pasien Glioblastoma Multiforme.</p>
     </div>
 
     <h3 style="margin-top: 30px;"><span class="step-badge">1</span>Pilih data pasien</h3>
@@ -89,40 +61,25 @@
         <button class="btn-sample" id="btn-252_t0_t1gd_img_prep" onclick="pilihJalur('sample', '252_t0_t1gd_img_prep')">Sampel Pasien 252</button>
     </div>
 
-    <br><b>Atau unggah berkas MRI Anda</b>
+    <br><b>Atau unggah berkas MRI Anda (T1Gd)</b>
     <input type="file" id="mri-upload" accept=".nii,.gz" onchange="pilihJalur('upload', null)">
 
     <hr>
     <div class="grid-2" style="margin-top: 20px;">
         <div>
             <h3><span class="step-badge">2</span>Parameter Klinis</h3>
-            
-            <label class="main-label">Usia (tahun)</label>
-            <input type="number" id="age" value="55">
-
-            <label class="main-label" style="margin-top:15px;">Jenis kelamin</label>
+            <label class="main-label">Usia (tahun)</label><input type="number" id="age" value="55">
+            <label class="main-label" style="margin-top:10px;">Jenis kelamin</label>
             <select id="sex"><option value="1">Laki-laki</option><option value="0">Perempuan</option></select>
-
-            <div style="margin-top:15px; display:flex; align-items:center; gap:5px;">
-                <input type="checkbox" id="chk-bmi" style="width:auto;" onchange="document.getElementById('bmi-box').style.opacity = this.checked ? '0.5' : '1'"> 
-                <label style="font-size: 14px;">Berat/tinggi tidak diketahui</label>
-            </div>
-            <div id="bmi-box" style="display:flex; gap:10px;">
+            
+            <div style="margin-top:15px; display:flex; gap:10px;" id="bmi-box">
                 <div><label class="main-label">Berat (kg)</label><input type="number" id="weight" value="65.0"></div>
                 <div><label class="main-label">Tinggi (cm)</label><input type="number" id="height" value="165.0"></div>
             </div>
-
-            <div style="margin-top:15px; display:flex; align-items:center; gap:5px;">
-                <input type="checkbox" id="chk-who" style="width:auto;" onchange="document.getElementById('who').disabled = this.checked"> 
-                <label style="font-size: 14px;">Status performa tidak diketahui</label>
-            </div>
-            <input type="number" id="who" value="1" min="0" max="5">
-
-            <div style="margin-top:15px; display:flex; align-items:center; gap:5px;">
-                <input type="checkbox" id="chk-dose" style="width:auto;" onchange="document.getElementById('dose').disabled = this.checked"> 
-                <label style="font-size: 14px;">Dosis radioterapi tidak diketahui</label>
-            </div>
-            <input type="number" id="dose" value="60">
+            
+            <label class="main-label" style="margin-top:10px;">Status Performa WHO</label><input type="number" id="who" value="1" min="0" max="5">
+            
+            <label class="main-label" style="margin-top:10px;">Dosis Radioterapi (Gy)</label><input type="number" id="dose" value="60">
 
             <button class="btn-calc" id="btn-hitung" onclick="eksekusiAI()">Jalankan Analisis</button>
         </div>
@@ -130,39 +87,38 @@
         <div id="section-hasil" style="display: none;">
             <h3><span class="step-badge">3</span>Hasil Analisis Model — <span id="lbl-pid"></span></h3>
             
-            <div class="card">
+            <div class="card" style="position: relative;">
                 <div class="tabs">
-                    <div class="tab" id="tab2d" onclick="ubahTab('2d')">Irisan 2D Multi-Planar</div>
-                    <div class="tab active" id="tab3d" onclick="ubahTab('3d')">Tampilan 3D</div>
+                    <div class="tab active" id="tab2d" onclick="ubahTab('2d')">Irisan T1Gd + Tumor 2D</div>
+                    <div class="tab" id="tab3d" onclick="ubahTab('3d')">Rendering Spasial 3D</div>
+                    <button class="btn-reset" id="btn-reset-cam" style="display:none;" onclick="resetKamera()">Reset Kamera</button>
                 </div>
                 
-                <div id="plot-3d" style="width:100%; height:320px; background-image: radial-gradient(circle, #ffffff, #f0f4f8); border-radius:12px;"></div>
+                <div id="plot-3d" style="display:none; width:100%; height:320px; border-radius:12px;"></div>
                 
-                <div id="plot-2d" style="display:none; background:transparent; border-radius:12px; height:320px; flex-direction:row; align-items:center; justify-content:space-evenly; padding:10px; gap: 10px;">
-                    <div style="text-align:center;"><div style="font-size:12px; font-weight:bold; color:var(--slate); margin-bottom:5px;">Aksial</div><canvas id="canvas-ax" width="180" height="180" style="background:#000; border-radius:6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></canvas></div>
-                    <div style="text-align:center;"><div style="font-size:12px; font-weight:bold; color:var(--slate); margin-bottom:5px;">Koronal</div><canvas id="canvas-cor" width="180" height="180" style="background:#000; border-radius:6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></canvas></div>
-                    <div style="text-align:center;"><div style="font-size:12px; font-weight:bold; color:var(--slate); margin-bottom:5px;">Sagital</div><canvas id="canvas-sag" width="180" height="180" style="background:#000; border-radius:6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></canvas></div>
+                <div id="plot-2d" style="display:flex; background:transparent; border-radius:12px; height:320px; flex-direction:row; align-items:center; justify-content:space-evenly; padding:10px; gap: 10px;">
+                    <div style="text-align:center;"><div style="font-size:11px; font-weight:bold; color:var(--slate); margin-bottom:5px;">Aksial (Atas)</div><canvas id="canvas-ax" width="160" height="160" style="background:#000; border-radius:6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></canvas></div>
+                    <div style="text-align:center;"><div style="font-size:11px; font-weight:bold; color:var(--slate); margin-bottom:5px;">Koronal (Depan)</div><canvas id="canvas-cor" width="160" height="160" style="background:#000; border-radius:6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></canvas></div>
+                    <div style="text-align:center;"><div style="font-size:11px; font-weight:bold; color:var(--slate); margin-bottom:5px;">Sagital (Samping)</div><canvas id="canvas-sag" width="160" height="160" style="background:#000; border-radius:6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></canvas></div>
                 </div>
                 
                 <button class="btn-download" onclick="unduhBerkasGTV()">Unduh Berkas GTV Prediksi (.nii.gz)</button>
             </div>
 
-            <div class="grid-4">
+            <div class="grid-4" id="cards-container">
                 <div class="card"><div class="metric-num" id="lbl-volpred">- cc</div><div class="metric-label">Volume prediksi</div></div>
-                <div class="card"><div class="metric-num" id="lbl-volgt">- cc</div><div class="metric-label">Volume acuan ahli</div></div>
-                <div class="card"><div class="metric-num" id="lbl-dice">-</div><div class="metric-label">Dice</div><div class="metric-sub">kemiripan ahli</div></div>
-                <div class="card"><div class="metric-num" id="lbl-hd">- mm</div><div class="metric-label">HD95</div><div class="metric-sub">selisih tepi</div></div>
+                <div class="card" id="card-gt"><div class="metric-num" id="lbl-volgt">- cc</div><div class="metric-label">Volume acuan ahli</div></div>
+                <div class="card" id="card-dice"><div class="metric-num" id="lbl-dice">-</div><div class="metric-label">Dice Score</div></div>
+                <div class="card" id="card-hd"><div class="metric-num" id="lbl-hd">- mm</div><div class="metric-label">HD95</div></div>
             </div>
 
-            <div id="plot-survival" style="width:100%; height:330px; background:white; border:1px solid #E3EBF5; border-radius:12px; padding:10px; margin-top:20px; margin-bottom:10px;"></div>
+            <div id="plot-survival" style="width:100%; height:330px; background:white; border:1px solid #E3EBF5; border-radius:12px; padding:10px; margin-top:20px;"></div>
             
-            <div class="grid-3" style="gap:10px;">
-                <div class="card"><div class="metric-num" id="out-med">- minggu</div><div class="metric-label">Perkiraan waktu bertahan</div></div>
-                <div class="card"><div class="metric-num" id="out-prob">-%</div><div class="metric-label">Peluang bertahan 1 tahun</div></div>
-                <div class="card"><div class="metric-num" id="out-sigvar">-</div><div class="metric-label">Variabel Signifikan</div><div class="metric-sub" id="out-sigp">-</div></div>
+            <div class="grid-3" style="gap:10px; margin-top:15px;">
+                <div class="card"><div class="metric-num" id="out-med">- minggu</div><div class="metric-label">Median Survival Time</div><div class="metric-sub">sejak diagnosis pasca-operasi</div></div>
+                <div class="card"><div class="metric-num" id="out-prob">-%</div><div class="metric-label">Peluang Bertahan 1 Tahun</div><div class="metric-sub">sejak diagnosis pasca-operasi</div></div>
+                <div class="card"><div class="metric-num" id="out-sigvar">-</div><div class="metric-label">Faktor Paling Berpengaruh</div><div class="metric-sub" id="out-sigp">-</div></div>
             </div>
-            
-            <div id="recs-box" style="margin-top: 15px;"></div>
         </div>
     </div>
 </div>
@@ -171,8 +127,8 @@
 let modeTerpilih = null;
 let pidTerpilih = null;
 let cacheGtvBlobUrl = null;
+let cx=0, cy=0, cz=0; 
 
-// REVISI 1: Nilai diperbarui sesuai output notebook asli
 const metrikSampel = {
     '150_t0_t1gd_img_prep': { gt: 83.0, dice: 0.890, hd: 2.1 },
     '248_t0_t1gd_img_prep': { gt: 15.3, dice: 0.891, hd: 1.5 },
@@ -187,9 +143,7 @@ function pilihJalur(mode, pid) {
     });
     if(mode === 'sample') {
         const selectedBtn = document.getElementById('btn-' + pid);
-        if(selectedBtn) {
-            selectedBtn.style.borderColor = '#2563EB'; selectedBtn.style.background = '#EAF2FF';
-        }
+        if(selectedBtn) { selectedBtn.style.borderColor = '#2563EB'; selectedBtn.style.background = '#EAF2FF'; }
         document.getElementById('mri-upload').value = '';
     }
 }
@@ -198,10 +152,18 @@ function ubahTab(tab) {
     if(tab === '2d') {
         document.getElementById('tab2d').classList.add('active'); document.getElementById('tab3d').classList.remove('active');
         document.getElementById('plot-2d').style.display = 'flex'; document.getElementById('plot-3d').style.display = 'none';
+        document.getElementById('btn-reset-cam').style.display = 'none';
     } else {
         document.getElementById('tab3d').classList.add('active'); document.getElementById('tab2d').classList.remove('active');
         document.getElementById('plot-3d').style.display = 'block'; document.getElementById('plot-2d').style.display = 'none';
+        document.getElementById('btn-reset-cam').style.display = 'block';
     }
+}
+
+function resetKamera() {
+    Plotly.relayout('plot-3d', {
+        'scene.camera': { center: {x: cx, y: cy, z: cz}, eye: {x: cx+1.2, y: cy+1.2, z: cz+0.8} }
+    });
 }
 
 function drawSlice(canvasId, imgData, mskData) {
@@ -228,19 +190,15 @@ function drawSlice(canvasId, imgData, mskData) {
 }
 
 async function eksekusiAI() {
-    if (!modeTerpilih) { alert("Pilih sampel atau unggah file MRI mentah terlebih dahulu!"); return; }
-
+    if (!modeTerpilih) { alert("Pilih data terlebih dahulu!"); return; }
     const btn = document.getElementById('btn-hitung');
-    btn.innerText = "Memproses..."; btn.disabled = true;
+    btn.innerText = "Memproses Jaringan Otomatis..."; btn.disabled = true;
 
     const age = parseFloat(document.getElementById('age').value);
     const isMale = parseInt(document.getElementById('sex').value);
-    let bmi = 25.0;
-    if(!document.getElementById('chk-bmi').checked) {
-        bmi = parseFloat(document.getElementById('weight').value) / Math.pow(parseFloat(document.getElementById('height').value)/100, 2);
-    }
-    const who = document.getElementById('chk-who').checked ? 1 : parseFloat(document.getElementById('who').value);
-    const dose = document.getElementById('chk-dose').checked ? 60.0 : parseFloat(document.getElementById('dose').value);
+    const bmi = parseFloat(document.getElementById('weight').value) / Math.pow(parseFloat(document.getElementById('height').value)/100, 2);
+    const who = parseFloat(document.getElementById('who').value);
+    const dose = parseFloat(document.getElementById('dose').value);
 
     const formData = new FormData();
     formData.append("age", age); formData.append("is_male", isMale); formData.append("bmi", bmi); formData.append("who_raw", who); formData.append("dose_raw", dose);
@@ -255,18 +213,27 @@ async function eksekusiAI() {
         document.getElementById('lbl-volgt').innerText = metrikSampel[pidTerpilih].gt.toFixed(1) + " cc";
         document.getElementById('lbl-dice').innerText = metrikSampel[pidTerpilih].dice.toFixed(3);
         document.getElementById('lbl-hd').innerText = metrikSampel[pidTerpilih].hd.toFixed(1) + " mm";
+        
+        document.getElementById('card-gt').style.display = 'block';
+        document.getElementById('card-dice').style.display = 'block';
+        document.getElementById('card-hd').style.display = 'block';
+        document.getElementById('cards-container').style.gridTemplateColumns = "repeat(4, 1fr)";
     } else {
         const fileInput = document.getElementById('mri-upload');
         if(fileInput.files.length === 0) { alert("File kosong!"); btn.disabled = false; btn.innerText = "Jalankan Analisis"; return; }
         formData.append("file", fileInput.files[0]);
-        document.getElementById('lbl-pid').innerText = "Berkas Mandiri";
-        document.getElementById('lbl-volgt').innerText = "N/A"; document.getElementById('lbl-dice').innerText = "N/A"; document.getElementById('lbl-hd').innerText = "N/A";
+        document.getElementById('lbl-pid').innerText = "Pasien Mandiri";
+        
+        document.getElementById('card-gt').style.display = 'none';
+        document.getElementById('card-dice').style.display = 'none';
+        document.getElementById('card-hd').style.display = 'none';
+        document.getElementById('cards-container').style.gridTemplateColumns = "1fr";
     }
 
     try {
         const res = await fetch(API_URL, { method: 'POST', body: formData });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "Gagal memproses analisis di server.");
+        if (!res.ok) throw new Error(data.detail || "Gagal memproses biner.");
 
         document.getElementById('section-hasil').style.display = 'block';
         document.getElementById('lbl-volpred').innerText = data.volume_cc.toFixed(1) + " cc";
@@ -275,20 +242,22 @@ async function eksekusiAI() {
             const byteCharacters = atob(data.gtv_base64);
             const byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) { byteNumbers[i] = byteCharacters.charCodeAt(i); }
-            const byteArray = new Uint8Array(byteNumbers);
-            const blob = new Blob([byteArray], {type: "application/gzip"});
+            const blob = new Blob([new Uint8Array(byteNumbers)], {type: "application/gzip"});
             if (cacheGtvBlobUrl) URL.revokeObjectURL(cacheGtvBlobUrl);
             cacheGtvBlobUrl = URL.createObjectURL(blob);
         }
 
+        const max_val = Math.max(...data.otak_x);
+        cx = data.tumor_x.length ? data.tumor_x[Math.floor(data.tumor_x.length/2)] / max_val : 0.5;
+        cy = data.tumor_y.length ? data.tumor_y[Math.floor(data.tumor_y.length/2)] / max_val : 0.5;
+        cz = data.tumor_z.length ? data.tumor_z[Math.floor(data.tumor_z.length/2)] / max_val : 0.5;
+
         Plotly.newPlot('plot-3d', [
-            { x: data.otak_x, y: data.otak_y, z: data.otak_z, mode: 'markers', type: 'scatter3d', marker: { size: 1.5, color: '#A0aec0', opacity: 0.1 }, name: 'Batas Otak', hoverinfo: 'none' },
-            { x: data.tumor_x, y: data.tumor_y, z: data.tumor_z, mode: 'markers', type: 'scatter3d', marker: { size: 3.5, color: '#DC2626', opacity: 0.9 }, name: 'Volume Tumor' }
+            { x: data.otak_x, y: data.otak_y, z: data.otak_z, mode: 'markers', type: 'scatter3d', marker: { size: 1.5, color: '#334155', opacity: 0.05 }, name: 'Anatomi T1Gd', hoverinfo: 'none' },
+            { x: data.tumor_x, y: data.tumor_y, z: data.tumor_z, mode: 'markers', type: 'scatter3d', marker: { size: 3.5, color: '#DC2626', opacity: 1.0 }, name: 'Prediksi Tumor (GTV)' }
         ], { 
-            scene: { xaxis: {visible:false}, yaxis: {visible:false}, zaxis: {visible:false}, camera: { eye: {x: 1.5, y: 1.5, z: 0.5} } }, 
-            margin: { l:0, r:0, b:0, t:0 }, 
-            paper_bgcolor: 'rgba(0,0,0,0)', 
-            plot_bgcolor: 'rgba(0,0,0,0)' 
+            scene: { xaxis: {visible:false}, yaxis: {visible:false}, zaxis: {visible:false}, camera: { center: {x: cx, y: cy, z: cz}, eye: {x: cx+1.2, y: cy+1.2, z: cz+0.8} } }, 
+            margin: { l:0, r:0, b:0, t:0 }, paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)' 
         });
 
         drawSlice('canvas-ax', data.ax_img, data.ax_msk);
@@ -296,8 +265,8 @@ async function eksekusiAI() {
         drawSlice('canvas-sag', data.sag_img, data.sag_msk);
 
         Plotly.newPlot('plot-survival', [{
-            x: data.curve_t, y: data.curve_s, mode: 'lines', line: { color: '#2563EB', width: 3.5, shape: 'hv' }, fill: 'tozeroy', fillcolor: 'rgba(37,99,235,0.08)'
-        }], { title: 'Kurva Harapan Hidup Individual', margin: { l: 40, r: 20, b: 40, t: 40 }, xaxis: { title: 'Waktu (minggu)', gridcolor: '#EDF2F9' }, yaxis: { title: 'Peluang', gridcolor: '#EDF2F9', tickformat: '.0%', range: [0, 1.02] }, plot_bgcolor: "white", paper_bgcolor: "white" });
+            x: data.curve_t, y: data.curve_s, mode: 'lines', line: { color: '#2563EB', width: 3, shape: 'hv' }, fill: 'tozeroy', fillcolor: 'rgba(37,99,235,0.06)'
+        }], { title: 'Kurva Harapan Hidup Individual (Cox PH Model)', margin: { l: 40, r: 20, b: 40, t: 40 }, xaxis: { title: 'Waktu (minggu)' }, yaxis: { title: 'Peluang Harapan Hidup', tickformat: '.0%' }, plot_bgcolor: "white", paper_bgcolor: "white" });
 
         document.getElementById('out-med').innerText = data.median_weeks ? Math.round(data.median_weeks) + " minggu" : "> masa amatan";
         document.getElementById('out-prob').innerText = Math.round(data.prob_1_year * 100) + "%";
@@ -306,7 +275,7 @@ async function eksekusiAI() {
 
         document.getElementById('section-hasil').scrollIntoView({ behavior: 'smooth' });
     } catch(e) {
-        alert("Pesan dari Server: " + e.message);
+        alert("Gagal: " + e.message);
     } finally {
         btn.innerText = "Jalankan Analisis"; btn.disabled = false;
     }
@@ -315,7 +284,7 @@ async function eksekusiAI() {
 function unduhBerkasGTV() {
     if (!cacheGtvBlobUrl) return;
     const a = document.createElement('a'); a.href = cacheGtvBlobUrl;
-    a.download = "GTV_PREDIKSI_PASIEN_" + (pidTerpilih ? pidTerpilih.split('_')[0] : "MANDIRI") + ".nii.gz";
+    a.download = "GTV_PREDIKSI_" + (pidTerpilih ? pidTerpilih.split('_')[0] : "MANDIRI") + ".nii.gz";
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 </script>
